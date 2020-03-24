@@ -1,0 +1,10 @@
+[package]
+name = "pong"
+version = "0.1.0"
+authors = ["Florent Nuttens <fnuttens@dabao.fr>"]
+edition = "2018"
+
+[dependencies.amethyst]
+path = "../amethyst"
+version = "0.15"
+features = ["vulkan"]
