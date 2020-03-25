@@ -22,7 +22,10 @@ pub struct Pong;
 
 impl SimpleState for Pong {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
-        initialize_camera(data.world);
+        let world = data.world;
+        world.register::<Paddle>();
+        initialize_paddles(world);
+        initialize_camera(world);
     }
 }
 
@@ -60,5 +63,26 @@ fn initialize_camera(world: &mut World) {
         .create_entity()
         .with(Camera::standard_2d(ARENA_WIDTH, ARENA_HEIGHT))
         .with(transform)
+        .build();
+}
+
+fn initialize_paddles(world: &mut World) {
+    let mut left_transform = Transform::default();
+    let mut right_transform = Transform::default();
+
+    let y = ARENA_HEIGHT / 2.0;
+    left_transform.set_translation_xyz(PADDLE_WIDTH * 0.5, y, 0.0);
+    right_transform.set_translation_xyz(ARENA_WIDTH - PADDLE_WIDTH * 0.5, y, 0.0);
+
+    world
+        .create_entity()
+        .with(Paddle::new(Side::Left))
+        .with(left_transform)
+        .build();
+
+    world
+        .create_entity()
+        .with(Paddle::new(Side::Right))
+        .with(right_transform)
         .build();
 }
