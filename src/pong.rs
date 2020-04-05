@@ -2,7 +2,7 @@ use amethyst::{
     assets::{AssetStorage, Loader, Handle},
     core::timing::Time,
     core::transform::Transform,
-    ecs::prelude::{Component, DenseVecStorage},
+    ecs::prelude::{Component, DenseVecStorage, Entity},
     prelude::*,
     renderer::{
         Camera,
@@ -11,6 +11,12 @@ use amethyst::{
         SpriteSheet,
         SpriteSheetFormat,
         Texture,
+    },
+    ui::{
+        Anchor,
+        TtfFormat,
+        UiText,
+        UiTransform,
     }
 };
 
@@ -38,6 +44,7 @@ impl SimpleState for Pong {
 
         initialize_paddles(world, self.sprite_sheet_handle.clone().unwrap());
         initialize_camera(world);
+        initialize_scoreboard(world);
     }
 
     fn update(&mut self, data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
@@ -100,6 +107,17 @@ impl Component for Ball {
     type Storage = DenseVecStorage<Self>;
 }
 
+#[derive(Default)]
+pub struct ScoreBoard {
+    pub score_left: u32,
+    pub score_right: u32,
+}
+
+pub struct ScoreText {
+    pub p1_score: Entity,
+    pub p2_score: Entity,
+}
+
 fn initialize_camera(world: &mut World) {
     let mut transform = Transform::default();
     transform.set_translation_xyz(ARENA_WIDTH * 0.5, ARENA_HEIGHT * 0.5, 1.0);
@@ -154,6 +172,51 @@ fn initialize_ball(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>) 
         .with(local_transform)
         .with(sprite_render)
         .build();
+}
+
+fn initialize_scoreboard(world: &mut World) {
+    let font = world.read_resource::<Loader>().load(
+        "font/square.ttf",
+        TtfFormat,
+        (),
+        &world.read_resource(),
+    );
+
+    let p1_transform = UiTransform::new(
+        "P1".to_string(),
+        Anchor::TopMiddle, Anchor::TopMiddle,
+        -50., -50., 1.,
+        200., 50.,
+    );
+    let p2_transform = UiTransform::new(
+        "P2".to_string(),
+        Anchor::TopMiddle, Anchor::TopMiddle,
+        50., -50., 1.,
+        200., 50.,
+    );
+
+    let p1_score = world
+        .create_entity()
+        .with(p1_transform)
+        .with(UiText::new(
+            font.clone(),
+            "0".to_string(),
+            [1., 1., 1., 1.],
+            50.,
+        ))
+        .build();
+    let p2_score = world
+        .create_entity()
+        .with(p2_transform)
+        .with(UiText::new(
+            font,
+            "0".to_string(),
+            [1., 1., 1., 1.],
+            50.,
+        ))
+        .build();
+
+    world.insert(ScoreText {p1_score, p2_score});
 }
 
 fn load_sprite_sheet(world: &mut World) -> Handle<SpriteSheet> {
