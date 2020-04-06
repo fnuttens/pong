@@ -14,7 +14,7 @@ use amethyst::{
     },
 };
 
-use crate::pong::Ball;
+use crate::pong::components::Ball;
 
 #[derive(SystemDesc)]
 pub struct MoveBallsSystem;

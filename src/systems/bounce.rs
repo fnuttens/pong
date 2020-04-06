@@ -12,10 +12,12 @@ use amethyst::{
 };
 
 use crate::pong::{
-    Ball,
-    Side,
-    Paddle,
     ARENA_HEIGHT,
+    components::{
+        Ball,
+        Side,
+        Paddle,
+    }
 };
 
 pub struct BounceSystem;

@@ -15,6 +15,7 @@ use amethyst::{
 mod pong;
 mod systems;
 mod audio;
+pub mod components;
 
 use crate::pong::Pong;
 

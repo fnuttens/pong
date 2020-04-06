@@ -15,11 +15,10 @@ use amethyst::{
 };
 
 use crate::pong::{
-    Paddle,
-    Side,
     ARENA_HEIGHT,
     PADDLE_HEIGHT,
     PADDLE_VELOCITY,
+    components::{Paddle, Side},
 };
 
 #[derive(SystemDesc)]

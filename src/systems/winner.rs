@@ -16,11 +16,13 @@ use amethyst::{
 
 
 use crate::pong::{
-    Ball,
-    ScoreBoard,
-    ScoreText,
     ARENA_WIDTH,
     ARENA_HEIGHT,
+    components::{
+        Ball,
+        ScoreBoard,
+        ScoreText,
+    }
 };
 
 #[derive(SystemDesc)]

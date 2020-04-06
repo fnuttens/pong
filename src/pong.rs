@@ -2,7 +2,6 @@ use amethyst::{
     assets::{AssetStorage, Loader, Handle},
     core::timing::Time,
     core::transform::Transform,
-    ecs::prelude::{Component, DenseVecStorage, Entity},
     prelude::*,
     renderer::{
         Camera,
@@ -21,6 +20,7 @@ use amethyst::{
 };
 
 use crate::audio;
+pub use crate::components;
 
 pub const ARENA_HEIGHT: f32 = 100.0;
 pub const ARENA_WIDTH: f32 = 100.0;
@@ -66,61 +66,6 @@ impl SimpleState for Pong {
     }
 }
 
-#[derive(PartialEq, Eq)]
-pub enum Side {
-    Left,
-    Right,
-}
-
-pub struct Paddle {
-    pub side: Side,
-    pub width: f32,
-    pub height: f32,
-}
-
-impl Paddle {
-    fn new(side: Side) -> Self {
-        Paddle {
-            side,
-            width: PADDLE_WIDTH,
-            height: PADDLE_HEIGHT,
-        }
-    }
-}
-
-impl Component for Paddle {
-    type Storage = DenseVecStorage<Self>;
-}
-
-pub struct Ball {
-    pub velocity: [f32; 2],
-    pub radius: f32,
-}
-
-impl Ball {
-    fn new() -> Self {
-        Ball {
-            velocity: [BALL_VELOCITY_X, BALL_VELOCITY_Y],
-            radius: BALL_RADIUS,
-        }
-    }
-}
-
-impl Component for Ball {
-    type Storage = DenseVecStorage<Self>;
-}
-
-#[derive(Default)]
-pub struct ScoreBoard {
-    pub score_left: u32,
-    pub score_right: u32,
-}
-
-pub struct ScoreText {
-    pub p1_score: Entity,
-    pub p2_score: Entity,
-}
-
 fn initialize_camera(world: &mut World) {
     let mut transform = Transform::default();
     transform.set_translation_xyz(ARENA_WIDTH * 0.5, ARENA_HEIGHT * 0.5, 1.0);
@@ -147,14 +92,14 @@ fn initialize_paddles(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet
 
     world
         .create_entity()
-        .with(Paddle::new(Side::Left))
+        .with(components::Paddle::new(components::Side::Left))
         .with(left_transform)
         .with(sprite_render.clone())
         .build();
 
     world
         .create_entity()
-        .with(Paddle::new(Side::Right))
+        .with(components::Paddle::new(components::Side::Right))
         .with(right_transform)
         .with(sprite_render)
         .build();
@@ -171,7 +116,7 @@ fn initialize_ball(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>) 
 
     world
         .create_entity()
-        .with(Ball::new())
+        .with(components::Ball::new())
         .with(local_transform)
         .with(sprite_render)
         .build();
@@ -219,7 +164,7 @@ fn initialize_scoreboard(world: &mut World) {
         ))
         .build();
 
-    world.insert(ScoreText {p1_score, p2_score});
+    world.insert(components::ScoreText {p1_score, p2_score});
 }
 
 fn load_sprite_sheet(world: &mut World) -> Handle<SpriteSheet> {
