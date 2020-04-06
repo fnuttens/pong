@@ -20,6 +20,8 @@ use amethyst::{
     }
 };
 
+use crate::audio;
+
 pub const ARENA_HEIGHT: f32 = 100.0;
 pub const ARENA_WIDTH: f32 = 100.0;
 pub const BALL_VELOCITY_X: f32 = 75.0;
@@ -45,6 +47,7 @@ impl SimpleState for Pong {
         initialize_paddles(world, self.sprite_sheet_handle.clone().unwrap());
         initialize_camera(world);
         initialize_scoreboard(world);
+        audio::initialize_audio(world);
     }
 
     fn update(&mut self, data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {

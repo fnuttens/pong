@@ -1,4 +1,5 @@
 use amethyst::{
+    audio::AudioBundle,
     core::TransformBundle,
     input::{InputBundle, StringBindings},
     prelude::*,
@@ -13,6 +14,7 @@ use amethyst::{
 
 mod pong;
 mod systems;
+mod audio;
 
 use crate::pong::Pong;
 
@@ -39,6 +41,7 @@ fn main() -> amethyst::Result<()> {
                 .with_bindings_from_file(binding_path)?
         )?
         .with_bundle(UiBundle::<StringBindings>::new())?
+        .with_bundle(AudioBundle::default())?
         .with(systems::PaddleSystem, "paddle_system", &["input_system"])
         .with(systems::MoveBallsSystem, "ball_system", &[])
         .with(systems::BounceSystem, "collision_system", &["paddle_system", "ball_system"])
