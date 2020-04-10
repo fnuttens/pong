@@ -1,8 +1,12 @@
 use amethyst::{
+    assets::AssetStorage,
+    audio::{output::Output, Source},
     core::{Transform, SystemDesc},
     derive::SystemDesc,
     ecs::prelude::{
         Join,
+        Read,
+        ReadExpect,
         ReadStorage,
         System,
         SystemData,
@@ -17,6 +21,7 @@ use crate::pong::{
     Paddle,
     ARENA_HEIGHT,
 };
+use crate::audio;
 
 pub struct BounceSystem;
 
@@ -25,9 +30,12 @@ impl<'s> System<'s> for BounceSystem {
         WriteStorage<'s, Ball>,
         ReadStorage<'s, Paddle>,
         ReadStorage<'s, Transform>,
+        Read<'s, AssetStorage<Source>>,
+        ReadExpect<'s, audio::Sounds>,
+        Option<Read<'s, Output>>,
     );
 
-    fn run(&mut self, (mut balls, paddles, transforms): Self::SystemData) {
+    fn run(&mut self, (mut balls, paddles, transforms, storage, sounds, audio_output): Self::SystemData) {
         for (ball, transform) in (&mut balls, &transforms).join() {
             let ball_x = transform.translation().x;
             let ball_y = transform.translation().y;
@@ -37,6 +45,7 @@ impl<'s> System<'s> for BounceSystem {
 
             if is_ball_at_bottom_and_descending || is_ball_at_top_and_ascending {
                 ball.velocity[1] = -ball.velocity[1];
+                audio::play_bounce_sound(&*sounds, &storage, audio_output.as_deref());
             }
 
             for (paddle, paddle_transform) in (&paddles, &transforms).join() {
@@ -55,6 +64,7 @@ impl<'s> System<'s> for BounceSystem {
 
                     if is_left_paddle_and_ball_going_left || is_right_paddle_and_ball_going_right {
                         ball.velocity[0] = -ball.velocity[0];
+                        audio::play_bounce_sound(&*sounds, &storage, audio_output.as_deref());
                     }
                 }
             }
