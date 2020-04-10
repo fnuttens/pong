@@ -40,6 +40,17 @@ pub fn play_bounce_sound(
     }
 }
 
+pub fn play_score_sound(
+    sounds: &Sounds,
+    storage: &AssetStorage<Source>,
+    output: Option<&Output>) {
+    if let Some(output) = output.as_ref() {
+        if let Some(sound) = storage.get(&sounds.score_sfx) {
+            output.play_once(sound, 1.0);
+        }
+    }
+}
+
 fn load_audio_track(loader: &Loader, world: &World, file: &str) -> SourceHandle {
     loader.load(
         file,
