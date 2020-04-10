@@ -1,5 +1,5 @@
 use amethyst::{
-    audio::AudioBundle,
+    audio::{AudioBundle, DjSystemDesc},
     core::TransformBundle,
     input::{InputBundle, StringBindings},
     prelude::*,
@@ -42,6 +42,10 @@ fn main() -> amethyst::Result<()> {
         )?
         .with_bundle(UiBundle::<StringBindings>::new())?
         .with_bundle(AudioBundle::default())?
+        .with_system_desc(
+            DjSystemDesc::new(|music: &mut audio::Music| music.music.next()),
+            "dj_system",
+            &[])
         .with(systems::PaddleSystem, "paddle_system", &["input_system"])
         .with(systems::MoveBallsSystem, "ball_system", &[])
         .with(systems::BounceSystem, "collision_system", &["paddle_system", "ball_system"])
